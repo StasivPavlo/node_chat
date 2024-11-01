@@ -3,19 +3,21 @@
 import 'dotenv/config';
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { WebSocketServer } from 'ws';
-
-import './utils/associations.js';
+import { Server } from 'socket.io';
+import { instrument } from '@socket.io/admin-ui';
 
 import authRouter from './routers/auth.route.js';
 import chatRouter from './routers/chat.route.js';
 
-import authMiddleware from './middlewares/authMiddleware.js';
+import {
+  authMiddleware,
+  authSocketMiddleware,
+} from './middlewares/authMiddleware.js';
 import errorMiddleware from './middlewares/errorMiddleware.js';
 
-import * as jwtService from './services/jwt.service.js';
-import * as userService from './services/user.service.js';
 import * as messagesController from './controllers/messages.controller.js';
+
+import './utils/associations.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -34,50 +36,22 @@ const server = app.listen(PORT, () => {
   console.log(`Server is running http://localhost:${PORT}`);
 });
 
-const wss = new WebSocketServer({
-  server,
-  verifyClient: async (info, done) => {
-    const token = info.req.headers.authorization.split(' ')[1];
-
-    try {
-      const userFromToken = jwtService.verifyToken(token);
-
-      const user = await userService.findUser(userFromToken.email);
-
-      if (!user) {
-        done(false, 404, 'User not found');
-
-        return;
-      }
-
-      done(true);
-    } catch (e) {
-      done(false, 401, 'Unauthorized');
-    }
+const io = new Server(server, {
+  cors: {
+    origin: ['https://admin.socket.io'],
+    credentials: true,
   },
 });
 
-export const clients = new Map();
+io.use(authSocketMiddleware);
 
-wss.on('connection', async (ws, req) => {
-  const token = req.headers.authorization.split(' ')[1];
-  const userFromToken = jwtService.verifyToken(token);
+io.on('connection', messagesController.socketConnectionController);
 
-  clients.set(userFromToken.id, ws);
-
-  ws.on('close', () => {
-    clients.delete(userFromToken.id);
-  });
+io.on('connection', (socket) => {
+  socket.on('message', messagesController.socketMessageController(socket));
 });
 
-wss.on('connection', messagesController.socketConnectionController);
-
-wss.on('connection', async (ws, req) => {
-  const token = req.headers.authorization.split(' ')[1];
-  const userFromToken = jwtService.verifyToken(token);
-
-  ws.on(
-    'message',
-    messagesController.socketMessageController(ws, userFromToken.id),
-  );
+instrument(io, {
+  auth: false,
+  mode: 'development',
 });
