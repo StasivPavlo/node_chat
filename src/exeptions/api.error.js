@@ -30,9 +30,9 @@ class ApiError extends Error {
     });
   }
 
-  static notFound(errors) {
+  static notFound(message = 'Not Found', errors) {
     return new ApiError({
-      message: 'Not Found',
+      message,
       errors,
       status: 404,
     });

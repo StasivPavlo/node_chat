@@ -1,5 +1,5 @@
-import sequelize from '../utils/db.js';
 import { DataTypes } from '@sequelize/core';
+import sequelize from '../utils/db.js';
 
 const Token = sequelize.define(
   'token',

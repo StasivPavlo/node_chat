@@ -11,6 +11,28 @@ const User = sequelize.define('user', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  newEmail: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: true,
+  },
+  activationToken: {
+    type: DataTypes.STRING,
+  },
+  resetPasswordToken: {
+    type: DataTypes.STRING,
+  },
+  activationNewEmailToken: {
+    type: DataTypes.STRING,
+  },
 });
 
 export default User;

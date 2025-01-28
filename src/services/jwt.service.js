@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 export const createToken = (user) => {
-  return jwt.sign({ ...user }, process.env.JWT_SECRET, {
+  return jwt.sign({ ...user, iat: Date.now() }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRATION,
   });
 };
@@ -11,9 +11,13 @@ export const verifyToken = (token) => {
 };
 
 export const createRefreshToken = (user) => {
-  return jwt.sign({ ...user }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: process.env.REFRESH_TOKEN_EXPIRATION,
-  });
+  return jwt.sign(
+    { ...user, iat: Date.now() },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRATION,
+    },
+  );
 };
 
 export const verifyRefreshToken = (token) => {
