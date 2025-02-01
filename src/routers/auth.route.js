@@ -8,6 +8,8 @@ import catchError from '../utils/catchError.js';
 
 const router = Router();
 
+router.get('/checkAuth', authMiddleware, catchError(authController.checkAuth));
+
 router.post('/login', authValidator.login, catchError(authController.login));
 
 router.post(

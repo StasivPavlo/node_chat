@@ -1,8 +1,21 @@
 import { validationResult } from 'express-validator';
 
 import * as authService from '../services/auth.service.js';
+import * as userService from '../services/user.service.js';
 
 import ApiError from '../exeptions/api.error.js';
+
+export const checkAuth = async (req, res) => {
+  const { email } = res.locals.user;
+
+  const user = await userService.findUser(email);
+
+  if (!user) {
+    throw ApiError.forbidden('User not found!');
+  }
+
+  return res.status(200).json(userService.secureUser(user));
+};
 
 export const login = async (req, res) => {
   const validationResults = validationResult(req);
@@ -102,7 +115,7 @@ export const logout = async (req, res) => {
 export const refresh = async (req, res) => {
   const oldRefreshToken = req.cookies.refreshToken || '';
 
-  const { secureUser, refreshToken, accessToken } = await authService.refresh({
+  const { refreshToken, accessToken } = await authService.refresh({
     refreshToken: oldRefreshToken,
   });
 
@@ -112,5 +125,5 @@ export const refresh = async (req, res) => {
     secure: true,
   });
 
-  return res.status(200).json({ user: secureUser, accessToken });
+  return res.status(200).json({ accessToken });
 };
