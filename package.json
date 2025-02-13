@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "init": "mate-scripts init",
+    "setup": "node setup.js",
     "start": "node src/index.js",
     "lint": "npm run format && mate-scripts lint",
     "format": "prettier --ignore-path .prettierignore --write './src/**/*.{js,ts}'",
