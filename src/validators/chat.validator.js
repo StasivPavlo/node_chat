@@ -3,9 +3,9 @@ import { checkSchema } from 'express-validator';
 export const create = checkSchema(
   {
     title: {
+      trim: true,
       isString: true,
       isLength: { options: { min: 4, max: 40 } },
-      trim: true,
       notEmpty: true,
     },
   },
@@ -15,9 +15,9 @@ export const create = checkSchema(
 export const rename = checkSchema(
   {
     title: {
+      trim: true,
       isString: true,
       isLength: { options: { min: 4, max: 40 } },
-      trim: true,
       notEmpty: true,
     },
     id: { isNumeric: true },

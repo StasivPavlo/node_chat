@@ -3,7 +3,7 @@ import { Router } from 'express';
 import * as authController from '../controllers/auth.controller.js';
 import * as authValidator from '../validators/auth.validator.js';
 
-import authMiddleware from '../middlewares/authMiddleware.js';
+import { authMiddleware } from '../middlewares/authMiddleware.js';
 import catchError from '../utils/catchError.js';
 
 const router = Router();
