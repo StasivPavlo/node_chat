@@ -25,9 +25,8 @@ export const authMiddleware = (req, res, next) => {
 };
 
 export const authSocketMiddleware = async (socket, next) => {
-  const token = socket.handshake.headers.authorization.split(' ')[1];
-
   try {
+    const token = socket.handshake.auth.token;
     const decoded = jwtService.verifyToken(token);
     const user = await userService.findUser(decoded.email);
 

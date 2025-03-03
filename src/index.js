@@ -47,20 +47,20 @@ const server = app.listen(PORT, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: ['https://admin.socket.io'],
+    origin: ['http://localhost:5173', 'https://admin.socket.io'],
     credentials: true,
   },
 });
 
 io.use(authSocketMiddleware);
 
-io.on('connection', messagesController.socketConnectionController);
+io.on('connection', messagesController.socketConnection);
 
 io.on('connection', (socket) => {
-  socket.on('message', messagesController.socketMessageController(socket));
+  socket.on('message', messagesController.socketMessage(socket));
+  socket.on('joinToChat', messagesController.socketJoinToChat(socket));
 });
 
 instrument(io, {
   auth: false,
-  mode: 'development',
 });

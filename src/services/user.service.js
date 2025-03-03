@@ -8,8 +8,9 @@ import User from '../models/User.js';
 import ApiError from '../exeptions/api.error.js';
 import { hashPassword } from '../utils/helpers.js';
 
-export const secureUser = ({ email, name, phone }) => {
+export const secureUser = ({ id, email, name, phone }) => {
   return {
+    id,
     email,
     phone,
     name,
